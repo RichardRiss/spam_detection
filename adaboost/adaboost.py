@@ -89,8 +89,8 @@ def adaClassify(datToClass, classifierArr):
     m = shape(dataMatrix)[0]
     aggClassEst = mat(zeros((m, 1)))
     for i in range(len(classifierArr)):
-        classEst = stumpClassify(dataMatrix, classifierArr[i]['dim'], classifierArr[i]['thresh'],classifierArr[i]['ineq'])
-        aggClassEst += classifierArr[i]['alpha'] * classEst
+        classEst = stumpClassify(dataMatrix, classifierArr[0][i]['dim'], classifierArr[0][i]['thresh'],classifierArr[0][i]['ineq'])
+        aggClassEst += classifierArr[0][i]['alpha'] * classEst
         print("aggClassEst:",aggClassEst)
     #print("--->",sign(aggClassEst))
     return sign(aggClassEst)
@@ -152,10 +152,10 @@ if __name__ == "__main__":
     
     datArr, labelArr = loadSimpleData()
     classifierArr = adaBoostTrainDS(datArr, labelArr, 30)
-    print("classifierArr",classifierArr)
-    print("len(classifierArr):",len(classifierArr))
+    #print("classifierArr",classifierArr)
+    #print("len(classifierArr):",len(classifierArr))
     adaClassify([[5,5], [0,0]], classifierArr)
-    print(adaClassify([[5,5], [0,0]], classifierArr))
+    print(adaClassify([2,1], classifierArr))
     
     """
     datArr, labelArr = loadDataSet("horseColicTraining2.txt")
