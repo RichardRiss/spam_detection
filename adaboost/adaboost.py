@@ -209,7 +209,7 @@ def adaClassify(datToClass, classifierArr):
                                  classifierArr[i]['thresh'],
                                  classifierArr[i]['ineq'])
         aggClassEst += classifierArr[i]['alpha'] * classEst
-    return sign(aggClassEst)
+    return sign(aggClassEst), aggClassEst
 
 
 def error_rate(arr_predictions, array_labels):
@@ -251,26 +251,32 @@ def main():
 
     # Classify with testData
     test_data, test_label = loadDataSet('horseColicTest2.txt')
-    prediction10 = adaClassify(test_data, classify_array10)
-    prediction50 = adaClassify(test_data, classify_array50)
-    prediction100 = adaClassify(test_data, classify_array100)
-    prediction500 = adaClassify(test_data, classify_array500)
+    prediction10, prediction10Est = adaClassify(test_data, classify_array10)
+    prediction50, prediction50Est = adaClassify(test_data, classify_array50)
+    prediction100, prediction100Est = adaClassify(test_data, classify_array100)
+    prediction500, prediction500Est = adaClassify(test_data, classify_array500)
 
     # Get the error rate
     error10 = error_rate(prediction10, test_label)
-    print(f"Error rate for 10 weak learners is: {error10}.")
+    print(f"Error rate on test data for 10 weak learners is: {error10}.")
     error50 = error_rate(prediction50, test_label)
-    print(f"Error rate for 50 weak learners is: {error50}.")
+    print(f"Error rate on test data for 50 weak learners is: {error50}.")
     error100 = error_rate(prediction100, test_label)
-    print(f"Error rate for 100 weak learners is: {error100}.")
+    print(f"Error rate on test data for 100 weak learners is: {error100}.")
     error500 = error_rate(prediction500, test_label)
-    print(f"Error rate for 500 weak learners is: {error500}.")
+    print(f"Error rate on test data for 500 weak learners is: {error500}.")
 
-    # Plot receiver operating characteristic (ROC)
+    # Plot receiver operating characteristic (ROC) for Training data
     ax = plot_roc(aggClassEst10.T, labels2, "ROC for 10 decision stumps")
     plot_roc(aggClassEst50.T, labels2, "ROC for 50 decision stumps", ax, 1)
     plot_roc(aggClassEst100.T, labels2, "ROC for 100 decision stumps", ax, 2)
     plot_roc(aggClassEst500.T, labels2, "ROC for 500 decision stumps", ax, 3)
+
+    # Plot receiver operating characteristic (ROC) for Test data
+    ax = plot_roc(prediction10Est.T, test_label, "Test Data: ROC for 10 decision stumps")
+    plot_roc(prediction50Est.T, test_label, "Test Data: ROC for 50 decision stumps", ax, 1)
+    plot_roc(prediction100Est.T, test_label, "Test Data: ROC for 100 decision stumps", ax, 2)
+    plot_roc(prediction500Est.T, test_label, "Test Data: ROC for 500 decision stumps", ax, 3)
 
 
 if __name__ == '__main__':
