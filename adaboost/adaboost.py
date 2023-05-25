@@ -239,7 +239,7 @@ def main():
     ###############
     # Complex data
     ###############
-    datas_mat2, labels2 = loadDataSet("horseColicTraining2.txt")
+    datas_mat2, labels2 = loadDataSet("adaboost/horseColicTraining2.txt")
     # Train 10 weak learners
     classify_array10, aggClassEst10 = adaBoostTrainDS(datas_mat2, labels2, 10)
     # Train 50 weak learner
@@ -250,7 +250,7 @@ def main():
     classify_array500, aggClassEst500 = adaBoostTrainDS(datas_mat2, labels2, 500)
 
     # Classify with testData
-    test_data, test_label = loadDataSet('horseColicTest2.txt')
+    test_data, test_label = loadDataSet('adaboost/horseColicTest2.txt')
     prediction10, prediction10Est = adaClassify(test_data, classify_array10)
     prediction50, prediction50Est = adaClassify(test_data, classify_array50)
     prediction100, prediction100Est = adaClassify(test_data, classify_array100)
