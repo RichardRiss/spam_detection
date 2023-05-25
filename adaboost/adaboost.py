@@ -78,6 +78,7 @@ def plot_roc(predStrengths, classLabels, title, ax=None, plotnum=0):
     ax[plotnum].set_xlim(left=0)
     ax[plotnum].set_ylim(bottom=0)
     print(f'The Area Under the Curve for "{title}" is: {ySum * xStep}')
+    ax[plotnum].text(0.7,0.1,f'Integral is {round(ySum * xStep, 2)}')
 
     block = plotnum == (subplots - 1)
     plt.show(block=block)
@@ -225,13 +226,13 @@ def main():
     # normal simple data
     datas_mat, labels = loadSimpleData()
     ax = plot_data(datas_mat, labels, "Simple Data")
-    classify_array, aggClassEst = adaBoostTrainDS(datas_mat, labels, 10)
+    classify_array, aggClassEst = adaBoostTrainDS(datas_mat, labels, 5)
     plot_threshold(ax, classify_array)
 
     # slightly changed simple data
     datas_mat2, labels2 = loadSimpleData2()
     plot_data(datas_mat2, labels2, "Simple Data2", 1, ax)
-    classify_array2, aggClassEst2 = adaBoostTrainDS(datas_mat2, labels2, 10)
+    classify_array2, aggClassEst2 = adaBoostTrainDS(datas_mat2, labels2, 5)
     plot_threshold(ax, classify_array2, 1)
 
     #print(adaClassify([[2, 1], [0, 0]], classify_array2))
