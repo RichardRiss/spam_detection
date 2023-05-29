@@ -49,7 +49,7 @@ def plot_threshold(ax, data, plotnum=0):
             ax[plotnum].axvline(x=thresh, color=color, linestyle='--')
 
 
-def plot_roc(predStrengths, classLabels, title, ax=None, plotnum=0):
+def plot_roc(predStrengths, classLabels, title, ax=None, plotnum=0, block=False):
     subplots = 4
     cur = (1.0, 1.0)
     ySum = 0.0
@@ -80,7 +80,6 @@ def plot_roc(predStrengths, classLabels, title, ax=None, plotnum=0):
     print(f'The Area Under the Curve for "{title}" is: {ySum * xStep}')
     ax[plotnum].text(0.7,0.1,f'Integral is {round(ySum * xStep, 2)}')
 
-    block = plotnum == (subplots - 1)
     plt.show(block=block)
     return ax
 
@@ -235,7 +234,6 @@ def main():
     classify_array2, aggClassEst2 = adaBoostTrainDS(datas_mat2, labels2, 5)
     plot_threshold(ax, classify_array2, 1)
 
-    #print(adaClassify([[2, 1], [0, 0]], classify_array2))
 
     ###############
     # Complex data
@@ -277,7 +275,7 @@ def main():
     ax = plot_roc(prediction10Est.T, test_label, "Test Data: ROC for 10 decision stumps")
     plot_roc(prediction50Est.T, test_label, "Test Data: ROC for 50 decision stumps", ax, 1)
     plot_roc(prediction100Est.T, test_label, "Test Data: ROC for 100 decision stumps", ax, 2)
-    plot_roc(prediction500Est.T, test_label, "Test Data: ROC for 500 decision stumps", ax, 3)
+    plot_roc(prediction500Est.T, test_label, "Test Data: ROC for 500 decision stumps", ax, 3, True)
 
 
 if __name__ == '__main__':
