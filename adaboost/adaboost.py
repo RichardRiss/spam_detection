@@ -234,6 +234,7 @@ def main():
     classify_array2, aggClassEst2 = adaBoostTrainDS(datas_mat2, labels2, 5)
     plot_threshold(ax, classify_array2, 1)
 
+    #print(adaClassify([2,1], classify_array2))
 
     ###############
     # Complex data
@@ -266,10 +267,10 @@ def main():
     print(f"Error rate on test data for 500 weak learners is: {error500}.")
 
     # Plot receiver operating characteristic (ROC) for Training data
-    ax = plot_roc(aggClassEst10.T, labels2, "ROC for 10 decision stumps")
-    plot_roc(aggClassEst50.T, labels2, "ROC for 50 decision stumps", ax, 1)
-    plot_roc(aggClassEst100.T, labels2, "ROC for 100 decision stumps", ax, 2)
-    plot_roc(aggClassEst500.T, labels2, "ROC for 500 decision stumps", ax, 3)
+    ax = plot_roc(aggClassEst10.T, labels3, "ROC for 10 decision stumps")
+    plot_roc(aggClassEst50.T, labels3, "ROC for 50 decision stumps", ax, 1)
+    plot_roc(aggClassEst100.T, labels3, "ROC for 100 decision stumps", ax, 2)
+    plot_roc(aggClassEst500.T, labels3, "ROC for 500 decision stumps", ax, 3)
 
     # Plot receiver operating characteristic (ROC) for Test data
     ax = plot_roc(prediction10Est.T, test_label, "Test Data: ROC for 10 decision stumps")
