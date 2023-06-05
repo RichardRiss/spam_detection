@@ -78,7 +78,7 @@ def plot_roc(predStrengths, classLabels, title, ax=None, plotnum=0, block=False)
     ax[plotnum].set_xlim(left=0)
     ax[plotnum].set_ylim(bottom=0)
     print(f'The Area Under the Curve for "{title}" is: {ySum * xStep}')
-    ax[plotnum].text(0.7,0.1,f'Integral is {round(ySum * xStep, 2)}')
+    ax[plotnum].text(0.7,0.1,f'AUC is {round(ySum * xStep, 2)}')
 
     plt.show(block=block)
     return ax
