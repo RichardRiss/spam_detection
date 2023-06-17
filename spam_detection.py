@@ -2,6 +2,7 @@
 import logging
 import os
 import sys
+import glob
 
 # Importing necessary libraries for EDA
 import numpy as np
@@ -17,8 +18,8 @@ nltk.download('stopwords')
  
 # Importing libraries necessary for Model Building and Training
 import tensorflow as tf
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
  
@@ -37,7 +38,18 @@ from email.policy import default
 
 def importData():
   spam_ham = pd.read_csv('./Spam_Ham_data.csv')
-  spam = spam_ham.loc[spam_ham.label == 1.0]
+  csv_files = glob.glob(os.path.join('./Data', "*.csv"))
+  csv_data = []
+  for f in csv_files:
+    try:
+      data = pd.read_csv(f, on_bad_lines='skip')
+      csv_data.append(data)
+    except:
+      logging.error(f'{sys.exc_info()[1]}')
+      logging.error(f'Error on line {sys.exc_info()[-1].tb_lineno}')
+      logging.info(f"Error on import of file {f}")
+
+  spam = spam_ham.loc[spam_ham.label == 1.0]£
   ham = spam_ham.loc[spam_ham.label == 0]
   logging.info(f'{len(spam)} Spam sets and {len(ham)} valid sets.')
   data = pd.concat([ham[['email','label']], spam[['email','label']]], axis=0, ignore_index=True)
