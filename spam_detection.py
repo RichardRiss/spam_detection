@@ -49,7 +49,7 @@ def importData():
       logging.error(f'Error on line {sys.exc_info()[-1].tb_lineno}')
       logging.info(f"Error on import of file {f}")
 
-  spam = spam_ham.loc[spam_ham.label == 1.0]£
+  spam = spam_ham.loc[spam_ham.label == 1.0]
   ham = spam_ham.loc[spam_ham.label == 0]
   logging.info(f'{len(spam)} Spam sets and {len(ham)} valid sets.')
   data = pd.concat([ham[['email','label']], spam[['email','label']]], axis=0, ignore_index=True)
