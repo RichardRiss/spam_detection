@@ -37,20 +37,32 @@ from email.policy import default
 ############################
 
 def importData():
-  spam_ham = pd.read_csv('./Spam_Ham_data.csv')
-  csv_files = glob.glob(os.path.join('./Data', "*.csv"))
-  csv_data = []
-  for f in csv_files:
-    try:
-      data = pd.read_csv(f, on_bad_lines='skip')
-      csv_data.append(data)
-    except:
-      logging.error(f'{sys.exc_info()[1]}')
-      logging.error(f'Error on line {sys.exc_info()[-1].tb_lineno}')
-      logging.info(f"Error on import of file {f}")
+  # Spam Ham data
+  #spam_ham = pd.read_csv('./Spam_Ham_data.csv')
+  #spam = spam_ham.loc[spam_ham.label == 1.0]
+  #ham = spam_ham.loc[spam_ham.label == 0]
 
-  spam = spam_ham.loc[spam_ham.label == 1.0]
-  ham = spam_ham.loc[spam_ham.label == 0]
+  # Other Spam data
+  csv_files = glob.glob(os.path.join('./Data', "*.csv"))
+  spam_data = []
+  encodings = ["utf-8",'unicode_escape', "utf-8-sig", "latin1", "cp1252","iso-8859-1"]
+  encoding_dict = {}
+  for f in csv_files:
+    for encoding in encodings:
+      try:
+        data = pd.read_csv(f,encoding=encoding, on_bad_lines='skip')
+        spam_data.append(data)
+        encoding_dict[f]=encoding
+        break
+      except Exception as e:  # or the error you receive
+          pass
+      
+  # Enron Ham Data
+  ham = pd.read_csv('./enron.csv')
+  
+  spam = pd.concat(spam_data)
+
+
   logging.info(f'{len(spam)} Spam sets and {len(ham)} valid sets.')
   data = pd.concat([ham[['email','label']], spam[['email','label']]], axis=0, ignore_index=True)
   return data
