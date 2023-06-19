@@ -49,7 +49,7 @@ def plot_threshold(ax, data, plotnum=0):
             ax[plotnum].axvline(x=thresh, color=color, linestyle='--')
 
 
-def plot_roc(predStrengths, classLabels, title, ax=None, plotnum=0):
+def plot_roc(predStrengths, classLabels, title, ax=None, plotnum=0, block=False):
     subplots = 4
     cur = (1.0, 1.0)
     ySum = 0.0
@@ -78,8 +78,8 @@ def plot_roc(predStrengths, classLabels, title, ax=None, plotnum=0):
     ax[plotnum].set_xlim(left=0)
     ax[plotnum].set_ylim(bottom=0)
     print(f'The Area Under the Curve for "{title}" is: {ySum * xStep}')
+    ax[plotnum].text(0.7,0.1,f'AUC is {round(ySum * xStep, 2)}')
 
-    block = plotnum == (subplots - 1)
     plt.show(block=block)
     return ax
 
@@ -225,29 +225,29 @@ def main():
     # normal simple data
     datas_mat, labels = loadSimpleData()
     ax = plot_data(datas_mat, labels, "Simple Data")
-    classify_array, aggClassEst = adaBoostTrainDS(datas_mat, labels, 10)
+    classify_array, aggClassEst = adaBoostTrainDS(datas_mat, labels, 5)
     plot_threshold(ax, classify_array)
 
     # slightly changed simple data
     datas_mat2, labels2 = loadSimpleData2()
     plot_data(datas_mat2, labels2, "Simple Data2", 1, ax)
-    classify_array2, aggClassEst2 = adaBoostTrainDS(datas_mat2, labels2, 10)
+    classify_array2, aggClassEst2 = adaBoostTrainDS(datas_mat2, labels2, 5)
     plot_threshold(ax, classify_array2, 1)
 
-    #print(adaClassify([[2, 1], [0, 0]], classify_array2))
+    #print(adaClassify([2,1], classify_array2))
 
     ###############
     # Complex data
     ###############
-    datas_mat2, labels2 = loadDataSet("adaboost/horseColicTraining2.txt")
+    datas_mat3, labels3 = loadDataSet("adaboost/horseColicTraining2.txt")
     # Train 10 weak learners
-    classify_array10, aggClassEst10 = adaBoostTrainDS(datas_mat2, labels2, 10)
+    classify_array10, aggClassEst10 = adaBoostTrainDS(datas_mat3, labels3, 10)
     # Train 50 weak learner
-    classify_array50, aggClassEst50 = adaBoostTrainDS(datas_mat2, labels2, 50)
+    classify_array50, aggClassEst50 = adaBoostTrainDS(datas_mat3, labels3, 50)
     # Train 100 weak learner
-    classify_array100, aggClassEst100 = adaBoostTrainDS(datas_mat2, labels2, 100)
+    classify_array100, aggClassEst100 = adaBoostTrainDS(datas_mat3, labels3, 100)
     # Train 500 weak learner
-    classify_array500, aggClassEst500 = adaBoostTrainDS(datas_mat2, labels2, 500)
+    classify_array500, aggClassEst500 = adaBoostTrainDS(datas_mat3, labels3, 500)
 
     # Classify with testData
     test_data, test_label = loadDataSet('adaboost/horseColicTest2.txt')
@@ -267,16 +267,16 @@ def main():
     print(f"Error rate on test data for 500 weak learners is: {error500}.")
 
     # Plot receiver operating characteristic (ROC) for Training data
-    ax = plot_roc(aggClassEst10.T, labels2, "ROC for 10 decision stumps")
-    plot_roc(aggClassEst50.T, labels2, "ROC for 50 decision stumps", ax, 1)
-    plot_roc(aggClassEst100.T, labels2, "ROC for 100 decision stumps", ax, 2)
-    plot_roc(aggClassEst500.T, labels2, "ROC for 500 decision stumps", ax, 3)
+    ax = plot_roc(aggClassEst10.T, labels3, "ROC for 10 decision stumps")
+    plot_roc(aggClassEst50.T, labels3, "ROC for 50 decision stumps", ax, 1)
+    plot_roc(aggClassEst100.T, labels3, "ROC for 100 decision stumps", ax, 2)
+    plot_roc(aggClassEst500.T, labels3, "ROC for 500 decision stumps", ax, 3)
 
     # Plot receiver operating characteristic (ROC) for Test data
     ax = plot_roc(prediction10Est.T, test_label, "Test Data: ROC for 10 decision stumps")
     plot_roc(prediction50Est.T, test_label, "Test Data: ROC for 50 decision stumps", ax, 1)
     plot_roc(prediction100Est.T, test_label, "Test Data: ROC for 100 decision stumps", ax, 2)
-    plot_roc(prediction500Est.T, test_label, "Test Data: ROC for 500 decision stumps", ax, 3)
+    plot_roc(prediction500Est.T, test_label, "Test Data: ROC for 500 decision stumps", ax, 3, True)
 
 
 if __name__ == '__main__':
