@@ -47,12 +47,15 @@ def importData():
   spam_data = []
   encodings = ["utf-8",'unicode_escape', "utf-8-sig", "latin1", "cp1252","iso-8859-1"]
   encoding_dict = {}
+  count = 0
   for f in csv_files:
     for encoding in encodings:
       try:
         data = pd.read_csv(f,encoding=encoding, on_bad_lines='skip')
         spam_data.append(data)
         encoding_dict[f]=encoding
+        count += 1
+        logging.info(f'{count}/{len(csv_files)} processed.')
         break
       except Exception as e:  # or the error you receive
           pass
@@ -115,7 +118,7 @@ def tokenize(clean_data):
     #train test split
     train_X, test_X, train_label, test_label = train_test_split(X,
                                                         y,
-                                                        test_size = 0.2,
+                                                        test_size = 0.9,
                                                         random_state = 42)
 
     # Tokenize the text data
@@ -169,7 +172,7 @@ def train_model(train_sequences, test_sequences, train_label, test_label, tokeni
     
     # Train the model
     history = model.fit(train_sequences, train_label, validation_data=(test_sequences, test_label),
-                        epochs=20,
+                        epochs=10,
                         batch_size=32,
                         callbacks = [lr, es]
                     )
@@ -186,6 +189,7 @@ def evaluate(model, test_sequences, test_label):
     test_loss, test_accuracy = model.evaluate(test_sequences, test_label)
     logging.info(f'Test Loss : {test_loss}')
     logging.info(f'Test Accuracy : {test_accuracy}')
+    model.save('tensor_model/spam_detection')
     
    
 
@@ -196,7 +200,7 @@ def evaluate(model, test_sequences, test_label):
 
 def init_logging():
   log_format = f"%(asctime)s [%(processName)s] [%(name)s] [%(levelname)s] %(message)s"
-  log_level = logging.DEBUG
+  log_level = logging.NOTSET
   if getattr(sys, 'frozen', False):
     folder = os.path.dirname(sys.executable)
   else:
@@ -221,4 +225,5 @@ def main():
     
 
 if __name__ == '__main__':
+    init_logging()
     main()

@@ -1,5 +1,6 @@
 import logging
 import os
+import glob
 import sys
 import pandas as pd
 import numpy as np
@@ -17,25 +18,28 @@ from sklearn.metrics import accuracy_score
 # Train data
 ############################
 def train(data: pd.DataFrame):
-  # Split into features and label
-  X = data.content
-  y = data.label.astype(int)
-  
-  # Turn wordlist into tokens
-  vector = CountVectorizer()
-  X = vector.fit_transform(X)
-  X.toarray().shape
-  
-  # split into training and test data
-  X_train,X_rem,y_train,y_rem = train_test_split(X, y, test_size=0.20, random_state=39)
-  X_val,X_test,y_val,y_test = train_test_split(X_rem, y_rem, test_size=0.50, random_state=39)
+  try:
+    # Split into features and label
+    X = data.content
+    y = data.label.astype(int)
+    
+    # Turn wordlist into tokens
+    vector = CountVectorizer()
+    X = vector.fit_transform(X)
+    #X.toarray().shape
+    
+    # split into training and test data
+    X_train,X_rem,y_train,y_rem = train_test_split(X, y, test_size=0.20, random_state=39)
+    X_val,X_test,y_val,y_test = train_test_split(X_rem, y_rem, test_size=0.50, random_state=39)
 
-  # KNN model
-  knn = KNeighborsClassifier()
-  model = knn.fit(X_train, y_train)
-  y_pred = model.predict(X_val)
-  logging.info(f'"Accuracy for validation set: {(accuracy_score(y_val, y_pred)*100)}%')
-
+    # KNN model
+    knn = KNeighborsClassifier()
+    model = knn.fit(X_train, y_train)
+    y_pred = model.predict(X_val)
+    logging.info(f'"Accuracy for validation set: {(accuracy_score(y_val, y_pred)*100)}%')
+  
+  except Exception as e:
+     print(e)
 
 
 ############################
@@ -76,17 +80,44 @@ def dataPreprocessing(data: pd.DataFrame):
 ############################
 
 def importData():
-  spam_ham = pd.read_csv('./Spam_Ham_data.csv')
-  spam = spam_ham.loc[spam_ham.label == 1.0]
-  ham = spam_ham.loc[spam_ham.label == 0]
+  # Spam Ham data
+  #spam_ham = pd.read_csv('./Spam_Ham_data.csv')
+  #spam = spam_ham.loc[spam_ham.label == 1.0]
+  #ham = spam_ham.loc[spam_ham.label == 0]
+
+  # Other Spam data
+  csv_files = glob.glob(os.path.join('./Data', "*.csv"))
+  spam_data = []
+  encodings = ["utf-8",'unicode_escape', "utf-8-sig", "latin1", "cp1252","iso-8859-1"]
+  encoding_dict = {}
+  count = 0
+  for f in csv_files:
+    for encoding in encodings:
+      try:
+        data = pd.read_csv(f,encoding=encoding, on_bad_lines='skip')
+        spam_data.append(data)
+        encoding_dict[f]=encoding
+        count += 1
+        logging.info(f'{count}/{len(csv_files)} processed.')
+        break
+      except Exception as e:  # or the error you receive
+          pass
+      
+  # Enron Ham Data
+  ham = pd.read_csv('./enron.csv')
+  
+  spam = pd.concat(spam_data)
+
+
   logging.info(f'{len(spam)} Spam sets and {len(ham)} valid sets.')
   data = pd.concat([ham[['email','label']], spam[['email','label']]], axis=0, ignore_index=True)
   return data
 
 
 def main():
-    data = importData()
-    clean_data = dataPreprocessing(data)
+    #data = importData()
+    #clean_data = dataPreprocessing(data)
+    clean_data = pd.read_csv('./Data/SpamHamTokens.csv')
     train(clean_data)
 
 
