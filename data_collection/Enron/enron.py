@@ -7,14 +7,14 @@ import email
 import os
 
 
-df = pd.read_csv("emails.csv")
-f = open('enron.csv', 'w')
+df = pd.read_csv("./data_collection/Enron/email.csv", sep=';', encoding='utf-8',names=['message','label'])
+f = open('out.csv', 'w')
 
 for mail in df.loc:
     e = email.message_from_string(mail['message'])
-    hdate = e.get('Date')
-    hfrom = e.get('From')
-    hsubject = e.get("Subject")
+    #hdate = e.get('Date')
+    #hfrom = e.get('From')
+    #hsubject = e.get("Subject")
     content = e.get_payload()
     #f.write("\"b\'Date: {} From: {} Subject: {} {} \", 1\n".format(hdate,hfrom,hsubject,content.replace('\n', ' ')))
     content = content.replace('\n', ' ')
