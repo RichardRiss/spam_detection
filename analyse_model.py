@@ -124,22 +124,23 @@ def main():
     
     #clean_data = dataPreprocessing(data)
     #clean_sample = dataPreprocessing(sample_data)
-    #model = tf.keras.models.load_model(filepath='./tensor_model/spam_detection_autoencoder3')
-    #model: (tf.keras.Model|None)
+    model = tf.keras.models.load_model(filepath='./tensor_model/spam_detection_autoencoder3')
+    model: (tf.keras.Model|None)
 
-    model = joblib.load('./forest_model/random_forest.joblib')
+    #model = joblib.load('./forest_model/random_forest.joblib')
 
 
     #X = clean_data.content
     labels = data.label.astype(int)
-    '''
+    data = dataPreprocessing(data)
+    data = data['content']
     vocab_size=100
     oov_tok='<OOV>'
     tokenizer = Tokenizer(num_words=vocab_size,oov_token=oov_tok)
 
     # Yahoo Data
-    tokenizer.fit_on_texts(X)
-    test_sequences = tokenizer.texts_to_sequences(X)
+    tokenizer.fit_on_texts(data)
+    test_sequences = tokenizer.texts_to_sequences(data)
     max_len = 100  # maximum sequence length
 
     test_sequences = pad_sequences(test_sequences,
@@ -149,6 +150,7 @@ def main():
     
     
     # Sample Data
+    '''
     sample_labels = sample_data.label.astype(int)
     tokenizer.fit_on_texts(clean_sample.content)
     sample_sequences = tokenizer.texts_to_sequences(clean_sample.content)
@@ -159,21 +161,23 @@ def main():
                                     truncating='post')
   
     '''
+
     # Evaluate
     labels = labels.to_numpy()
     labels_inv = np.where((labels==0)|(labels==1), labels^1, labels)
     t = time.time()
-    eval = model.predict(data_tfidf)
+    eval,rec_error = evaluate(model,test_sequences)
     #eval,rec_error =  evaluate(model, test_sequences)
     t_func = time.time() - t
     
-    y_score = model.predict_proba(data_tfidf)[:,1]
+    #y_score = model.predict_proba(data_tfidf)[:,1]
 
 
-    fpr, tpr, _ = roc_curve(labels, y_score)
-    roc_auc = auc(fpr, tpr)
+    #fpr, tpr, _ = roc_curve(labels_inv, y_score)
+    #roc_auc = auc(fpr, tpr)
 
     # Plot the ROC curve
+    '''
     plt.figure()
     lw = 2
     plt.plot(fpr, tpr, color='darkorange', lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
@@ -185,7 +189,7 @@ def main():
     plt.title('Receiver operating characteristic example')
     plt.legend(loc="lower right")
     plt.show()
-
+    '''
 
 
 
@@ -211,17 +215,17 @@ def main():
 
     # TP,FP,FN,TN
     # Calculating TP, FP, TN, FN
-    TP = np.sum((labels == 1) & (eval == 1))
-    FP = np.sum((labels == 0) & (eval == 1))
-    TN = np.sum((labels == 0) & (eval == 0))
-    FN = np.sum((labels == 1) & (eval == 0))
+    TP = np.sum((labels_inv == 1) & (eval == 1))
+    FP = np.sum((labels_inv == 0) & (eval == 1))
+    TN = np.sum((labels_inv == 0) & (eval == 0))
+    FN = np.sum((labels_inv == 1) & (eval == 0))
 
     # Categorizing data
     categories = ['True Positive', 'False Positive', 'True Negative', 'False Negative']
     values = [TP, FP, TN, FN]
 
     # Creating a DataFrame for seaborn plot
-    df = pd.DataFrame(list(zip(categories*len(labels), np.repeat(values, len(labels)))), 
+    df = pd.DataFrame(list(zip(categories*len(labels_inv), np.repeat(values, len(labels_inv)))), 
                       columns=['Categories', 'Values'])
 
     # Plotting the data

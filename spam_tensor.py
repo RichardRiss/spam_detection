@@ -301,10 +301,10 @@ def evaluate(model, test_sequences):
     reconstruction_errors = np.mean(np.square(test_sequences - reconstructed_sequences), axis=1)
 
     # Plot the distribution of reconstruction errors
-    #plt.hist(reconstruction_errors, bins=50)
-    #plt.xlabel('Reconstruction error')
-    #plt.ylabel('No of examples')
-    #plt.show()
+    plt.hist(reconstruction_errors, bins=50)
+    plt.xlabel('Reconstruction error')
+    plt.ylabel('No of examples')
+    plt.show()
 
     # Choose a threshold value that separates normal emails from anomalies
     threshold = np.percentile(reconstruction_errors, 95)  # adjust this value based on your plot
@@ -343,8 +343,8 @@ def main():
     clean_data = dataPreprocessing(data)
     train, test, train_label, test_label, tokenizer = tokenize(clean_data)
     #model = train_model(train, test, train_label, test_label, tokenizer)
-    model = train_model(train,test,tokenizer)
-    model = tf.keras.models.load_model('tensor_model/spam_detection_autoencoder')
+    #model = train_model(train,test,tokenizer)
+    model = tf.keras.models.load_model('tensor_model/spam_detection_autoencoder4')
     evaluate(model, test)
     
 
